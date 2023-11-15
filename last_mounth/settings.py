@@ -56,7 +56,7 @@ QUERYCOUNT = {
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'querycount.middleware.QueryCountMiddleware'
+    'querycount.middleware.QueryCountMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',

@@ -35,6 +35,7 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('text', models.CharField(max_length=100, verbose_name='Укажите текст отзыва:')),
                 ('product', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='comment_product', to='product.product')),
+
             ],
         ),
     ]
