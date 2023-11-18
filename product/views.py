@@ -2,15 +2,17 @@ from django.db import transaction
 from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404
 from rest_framework import status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from . import models
 from django.views import generic
 from product.models import Product, Category, Review
 from product.serializers import ProductSerializers, CategorySerializers, ReviewSerializers, ProductReviewSerializers, ProductCreateValidateSerializer
+from rest_framework.permissions import IsAuthenticated
 
 
 @api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
 def product_list_api_view(request):
     if request.method == "GET":
         products = Product.objects.select_related('category').all()
@@ -54,6 +56,7 @@ def product_detail_api_view(request, product_id):
 
 
 @api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
 def category_list_api_view(request):
     if request.method == "GET":
         category = Category.objects.select_related('name').all()
@@ -91,6 +94,7 @@ def category_detail_api_view(request, category_id):
 
 
 @api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
 def review_list_api_view(request):
     if request.method == "GET":
         review = Review.objects.select_related('product').all()
