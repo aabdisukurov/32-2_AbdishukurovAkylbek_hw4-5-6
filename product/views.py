@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.shortcuts import render, get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.generics import ListCreateAPIView
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from . import models
 from django.views import generic
@@ -10,6 +12,58 @@ from product.models import Product, Category, Review
 from product.serializers import ProductSerializers, CategorySerializers, ReviewSerializers, ProductReviewSerializers, ProductCreateValidateSerializer
 from rest_framework.permissions import IsAuthenticated
 
+
+class ProductListCreateAPIView(ListCreateAPIView):
+    serializer_class = ProductSerializers
+    queryset = Product.objects.all()
+    pagination_class = PageNumberPagination
+
+    def post(self, request, *args, **kwargs):
+        with transaction.atomic():
+            serializer = ProductCreateValidateSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            title = request.data.get('title')
+            category = request.data.get('category')
+            description = request.data.get('description')
+            price = request.data.get('price')
+            product = Product.objects.create(title=title, description=description, price=price, category=category)
+            return Response(status= status.HTTP_201_CREATED,
+                            data={'id': product.id, 'title': product.title})
+
+
+class CategoryListCreateAPIView(ListCreateAPIView):
+    serializer_class = ProductSerializers
+    queryset = Product.objects.all()
+    pagination_class = PageNumberPagination
+
+    def post(self, request, *args, **kwargs):
+        with transaction.atomic():
+            serializer = ProductCreateValidateSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            name = request.data.get('name')
+            category = Product.objects.create(name=name)
+            return Response(status=status.HTTP_201_CREATED,
+                            data={'id': category.id, 'title': category.title})
+
+
+class ReviewListCreateAPIView(ListCreateAPIView):
+    serializer_class = ProductSerializers
+    queryset = Product.objects.all()
+    pagination_class = PageNumberPagination
+
+    def post(self, request, *args, **kwargs):
+        with transaction.atomic():
+            serializer = ProductCreateValidateSerializer(data=request.data)
+            if not serializer.is_valid():
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            text = request.data.get('text')
+            product = request.data.get('product')
+            stars = request.data.get('stars')
+            review = Product.objects.create(text=text, product=product, stars=stars)
+            return Response(status=status.HTTP_201_CREATED,
+                            data={'id': review.id, 'title': review.title})
 
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
